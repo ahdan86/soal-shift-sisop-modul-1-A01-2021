@@ -1,8 +1,11 @@
 #!/bin/bash
 awk -F "\t" 'BEGIN {max=0} 
 {
-    cost = ($21/($18 - $21)*100);
-    if(cost >= max){max = cost;ROWID = $1;ORDID=$2}
+    if(NR!=1)
+    {
+        cost = ($21/($18 - $21)*100);
+        if(cost >= max){max = cost;ROWID = $1;ORDID=$2}
+    }
 }
 END {
     print "Transaksi terakhir dengan profit percentage terbesar yaitu",ORDID,"dengan persentase",max,"%\n"
