@@ -26,7 +26,7 @@ then
 	do
 		if [[ $file == *"kitten"* ]]
 		then
-			namafile=`printf "Koleksi_%02d.jpg" $s`
+			namafile=`printf "Kucing_%02d.jpg" $s`
 			mv $file $namafile
 			s=$((s+1))
 			mv *.jpg $newfile
@@ -52,7 +52,7 @@ then
 	do
 		if [[ $file == *"bunny"* ]]
 		then
-			namafile=`printf "Koleksi_%02d.jpg" $s`
+			namafile=`printf "Kelinci_%02d.jpg" $s`
 			mv $file $namafile
 			s=$((s+1))
 			mv *.jpg $newfile
