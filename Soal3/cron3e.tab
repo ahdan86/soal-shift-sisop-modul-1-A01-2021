@@ -1,6 +1,0 @@
-#zip
-0 7 * * 1-5 bash ~/Soal3/soal3d.sh
-
-
-#unzip
-0 18 * * 1-5 cd ~/Soal3 && pass=$(date "+%m%d%Y") && unzip -P &pass Koleksi.zip && rm Koleksi.zip
