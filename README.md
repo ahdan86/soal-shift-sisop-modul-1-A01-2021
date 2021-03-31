@@ -43,6 +43,88 @@ ryujin.1203,1,3
 <time> <hostname> <app_name>: <log_type> <log_message> (<username>)
 ```
 - Tidak boleh menggunakan AWK
+## Jawaban No.1
+**a.** Soal 1.a diperintahkan untuk menampilkan pesan ERROR dan INFO, untuk format yang diperlukan adalah jenis log(ERROR/INFO), pesan log, dan username dari setiap log. Untuk solusinya adalah dengan menggunakan `grep -oP` untuk mengambil pesan ERROR dan INFO. Untuk menyesuaikan format, karena yang diperlukan adalah jenis log dan kalimat setelahnya maka digunakan regex untuk fetch jenis log dan baris setelahnya. Syntax yang digunakan adalah
+```bash
+grep -oP "(INFO.*)|(ERROR.*)" syslog.log;
+printf "\n";
+```
+`-o` digunakan untuk fetch bagian tertentu dalam baris dan `-P` digunakan untuk memakai syntax regex Pearl.
+`.*` digunakan untuk mendapatkan karakter apapun setelah jenis log
+`|` digunakan untuk operator **or**
+
+**b.** Soal1.b diperintahkan untuk menampilkan semua pesan error yang muncul beserta jumlah kemunculannya. Untuk menampilkan semua pesan ERROR digunakan `grep -op` 
+```bash
+grep -oP "ERROR\s([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" syslog.log;
+```
+`([A-Z][a-z])` digunakan untuk mendapatkan huruf kaata yang memiliki huruf kapital diawal, `(\s[a-zA-Z']+){1,6}`  `+` digunakan untuk mendapatkan kata-kata setelahnya, dan`{1,6}` digunakan untuk mendapatkan minimum dan maximum dari kata-kata yang akan dimunculkan.
+Lalu untuk mendapatkan jumlah dari ERROR log yang muncul adalah dengan menggunakan `grep -c`
+```bash
+printf "AMOUNT OF ERROR: ";
+grep -c "ERROR" syslog.log;
+printf "\n";
+```
+`-c` digunakan untuk menghitung setiap log yang memiliki kata `ERROR`
+
+**c.** Untuk menyelesaikan masalah ini, maka diperlukan nama dari setiap user. Untuk mendapatkannya menggunakan syntax :
+```bash
+name=$(grep -rohP "(\([a-zA-Z.]+\))" syslog.log | sort | uniq | grep -oP "(?<=\().*(?=\))")
+printf "List of users :\n"
+echo $name;
+```
+`(\([a-zA-Z.]+\))` digunakan untuk mendapatkan kata yang berada di dalam parantheses yaitu user, `|sort|uniq|` digunakan untuk memilih unique user, karena hasil yang didapatkan masih menggunakan parantheses maka memerlukan filtering menggunakan `grep -oP "(?<=\().*(?=\))")`.
+Setelah mendapatkan unique user, maka dilakukan iterasi untuk setiap user dan menghitung berapa kali user tersebut mendapatkan pesan log menggunakan syntax :
+```bash
+for i in $name
+do
+    printf "Name of the user : %s\n" $i;
+    printf "Amount of error : ";
+    grep -cP "ERROR.*($i)" syslog.log;
+    printf "Amount of info : ";
+    grep -cP "INFO.*($i)" syslog.log;
+    printf "%s,%d,%d\n" $i $(grep -cP "INFO.*($i)" syslog.log) $(grep -cP "ERROR.*($i)" syslog.log);
+done
+```
+karena unique user disimpan di dalam variabel `$name`, maka iterasi digunakan pada variabel tersebut. Lalu untuk setiap user dihitung pesan log yang dihasilkan dengan menggunakan `grep -cP "ERROR.*($i)" syslog.log`.
+
+**d.** Untuk menyelesaikan soal ini diperlukan unique pesan error dari syslog.log. Untuk itu digunakan syntax :
+```bash
+error_sen=$(grep -oP "ERROR.*" syslog.log);
+```
+Lalu untuk menyesuaikan header pada error_message.csv digunakan syntax
+```bash
+printf "Error, Count\n" > error_message.csv;
+```
+Setelah itu dilakukan iterasi untuk setiap error message pada variabel `$error_sen`
+```bash
+echo "$error_sen" | grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" | sort | uniq | 
+        while read -r line 
+        do
+            number=$(grep -c "$line" syslog.log);
+            line+=",";
+            line+="$number";
+            printf "$line\n";
+        done | sort -rt',' -nk2 >> error_message.csv;
+```
+Karena `$error_sen` masih mengandung jenis log dan nama user maka harus dipisahkan dengan menggunakan `grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}"`, lalu dipilih unique message nya menggunakan ` | sort | uniq | `, setelah itu dilakukan iterasi menggunakan `while read -r` untuk mengconcatenate error message dengan jumlah kemunculan masing masing error message, setelah itu diurutkan berdasarkan jumlah menggunakan `| sort -rt',' -nk2 >> error_message.csv` dan menambahkan nya ke file error_message.csv.
+
+**e.** Untuk soal ini diperlukan nama setiap user dahulu menggunakan syntax seperti no **1.b** yaitu:
+```bash
+name=$(grep -rohP "(\([a-zA-Z.]+\))" syslog.log | sort | uniq | grep -oP "(?<=\().*(?=\))");
+```
+lalu membuat header di user_statistic.csv menggunakan:
+```bash
+printf "Username,INFO,ERROR\n" > user_statistic.csv;
+```
+Setelahnya dilakukan iterasi untuk setiap nama dalam variabel `$name` dan mencari jumlah ERRROR dan INFO untuk setiap user menggunakan :
+```bash
+for i in $name
+do
+    printf "%s,%d,%d\n" $i $(grep -cP "INFO.*($i)" syslog.log) $(grep -cP "ERROR.*($i)" syslog.log);
+done |sort >> user_statistic.csv;
+```
+syntax `|sort >> user_statistic.csv` digunakan untuk mengurutkan data berdasarkan nama secara ascending dan memasukkannya ke dalam file user_statistic.csv
+
 ### Soal No.2 
 Steven dan Manis mendirikan sebuah startup bernama “TokoShiSop”. Sedangkan kamu dan Clemong adalah karyawan pertama dari TokoShiSop. Setelah tiga tahun bekerja, Clemong diangkat menjadi manajer penjualan TokoShiSop, sedangkan kamu menjadi kepala gudang yang mengatur keluar masuknya barang.
 
