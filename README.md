@@ -53,18 +53,22 @@ printf "\n";
 `.*` digunakan untuk mendapatkan karakter apapun setelah jenis log
 `|` digunakan untuk operator **or**
 
-**b.** Soal1.b diperintahkan untuk menampilkan semua pesan error yang muncul beserta jumlah kemunculannya. Untuk menampilkan semua pesan ERROR digunakan `grep -op` 
+**b.** Untuk menyelesaikan soal ini diperlukan unique pesan error dari syslog.log. Untuk itu digunakan syntax :
 ```bash
-grep -oP "ERROR\s([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" syslog.log;
+error_sen=$(grep -oP "ERROR.*" syslog.log);
 ```
-`([A-Z][a-z])` digunakan untuk mendapatkan huruf kaata yang memiliki huruf kapital diawal, `(\s[a-zA-Z']+){1,6}`  `+` digunakan untuk mendapatkan kata-kata setelahnya, dan`{1,6}` digunakan untuk mendapatkan minimum dan maximum dari kata-kata yang akan dimunculkan.
-Lalu untuk mendapatkan jumlah dari ERROR log yang muncul adalah dengan menggunakan `grep -c`
+Setelah itu dilakukan iterasi untuk setiap error message pada variabel `$error_sen`
 ```bash
-printf "AMOUNT OF ERROR: ";
-grep -c "ERROR" syslog.log;
-printf "\n";
+echo "$error_sen" | grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" | sort | uniq | 
+        while read -r line 
+        do
+            number=$(grep -c "$line" syslog.log);
+            line+=",";
+            line+="$number";
+            printf "$line\n";
+        done | sort -rt',' -nk2 >> error_message.csv;
 ```
-`-c` digunakan untuk menghitung setiap log yang memiliki kata `ERROR`
+Karena `$error_sen` masih mengandung jenis log dan nama user maka harus dipisahkan dengan menggunakan `grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}"`, lalu dipilih unique message nya menggunakan ` | sort | uniq | `, setelah itu dilakukan iterasi menggunakan `while read -r` untuk mengconcatenate error message dengan jumlah kemunculan masing masing error message, setelah itu diurutkan berdasarkan jumlah menggunakan `| sort -rt',' -nk2 >> error_message.csv` dan menambahkan nya ke file error_message.csv.
 
 **c.** Untuk menyelesaikan masalah ini, maka diperlukan nama dari setiap user. Untuk mendapatkannya menggunakan syntax :
 ```bash
