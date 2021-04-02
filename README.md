@@ -188,6 +188,10 @@ END {
 ```
 `>` dipakai untuk membuat membuat file baru/menimpa file yang sudah ada `hasil.txt`
 
+Screenshot hasil untuk no 2a (Kodingan terpisah) ini adalah seperti berikut:
+![Screenshot2a](./soal2/Screenshot2A.png)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **b.** Pertama, memberikan perintah `BEGIN` untuk print apa yang diinstruksikan di soal:
 ```bash
 awk -F "\t" 'BEGIN {
@@ -220,6 +224,10 @@ END {
 ```
 Perulangan tersebut hanya mengeluarkan nama yang telah dimasukkan **1 kali** sehingga tidak berulang. Hasilnya akan ditambahkan ke `hasil.txt`
 
+Screenshot hasil untuk no 2b (Kodingan terpisah) ini adalah seperti berikut:
+![Screenshot2b](./soal2/Screenshot2B.png)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **c.** Untuk menghitung jumlah segmen transaksi yang paling sedikit maka akan dihitung setiap barisnya sehingga akan didapatkan jumlah dari setiap segmen :
 ```bash
 awk -F "\t" '{
@@ -243,6 +251,10 @@ END {
 ```
 Hasilnya akan ditambahkan ke `hasil.txt`
 
+Screenshot hasil untuk no 2c (Kodingan terpisah) ini adalah seperti berikut:
+![Screenshot2c](./soal2/Screenshot2C.png)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **d.** Untuk mendapatkan wilayah yang mendapatkan keuntungan terkecil caranya hampir sama seperti 2c namun nantinya tiap array dari masing-masing wilayah akan ditambahkan dengan nilai profitnya (bukan banyak wilayah) :
 ```bash
 awk -F "\t" '{
@@ -265,3 +277,7 @@ END {
 }' Laporan-TokoShiSop.tsv >> hasil.txt
 ```
 Hasilnya akan ditambahkan ke `hasil.txt`
+
+Screenshot hasil untuk no 2d (Kodingan terpisah) ini adalah seperti berikut:
+![Screenshot2d](./soal2/Screenshot2D.png)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
