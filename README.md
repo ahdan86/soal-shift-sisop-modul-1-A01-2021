@@ -53,6 +53,10 @@ printf "\n";
 `.*` digunakan untuk mendapatkan karakter apapun setelah jenis log
 `|` digunakan untuk operator **or**
 
+Screenshot hasil untuk no 1a (Kodingan terpisah) ini adalah seperti berikut:
+![screenshot1A](./soal1/screenshot1A.jpg)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **b.** Untuk menyelesaikan soal ini diperlukan unique pesan error dari syslog.log. Untuk itu digunakan syntax :
 ```bash
 error_sen=$(grep -oP "ERROR.*" syslog.log);
@@ -69,6 +73,10 @@ echo "$error_sen" | grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" | sort | uniq 
         done | sort -rt',' -nk2;
 ```
 Karena `$error_sen` masih mengandung jenis log dan nama user maka harus dipisahkan dengan menggunakan `grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}"`, lalu dipilih unique message nya menggunakan ` | sort | uniq | `, setelah itu dilakukan iterasi menggunakan `while read -r` untuk mengconcatenate error message dengan jumlah kemunculan masing masing error message, setelah itu diurutkan berdasarkan jumlah menggunakan `| sort -rt',' -nk2 `.
+
+Screenshot hasil untuk no 1b (Kodingan terpisah) ini adalah seperti berikut:
+![screenshot1B](./soal1/screenshot1B.jpg)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
 
 **c.** Untuk menyelesaikan masalah ini, maka diperlukan nama dari setiap user. Untuk mendapatkannya menggunakan syntax :
 ```bash
@@ -91,6 +99,10 @@ done
 ```
 karena unique user disimpan di dalam variabel `$name`, maka iterasi digunakan pada variabel tersebut. Lalu untuk setiap user dihitung pesan log yang dihasilkan dengan menggunakan `grep -cP "ERROR.*($i)" syslog.log`.
 
+Screenshot hasil untuk no 1c (Kodingan terpisah) ini adalah seperti berikut:
+![screenshot1C](./soal1/screenshot1C.jpg)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **d.** Untuk menyelesaikan soal ini diperlukan unique pesan error dari syslog.log. Untuk itu digunakan syntax :
 ```bash
 error_sen=$(grep -oP "ERROR.*" syslog.log);
@@ -112,6 +124,10 @@ echo "$error_sen" | grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}" | sort | uniq 
 ```
 Karena `$error_sen` masih mengandung jenis log dan nama user maka harus dipisahkan dengan menggunakan `grep -oP "([A-Z])([a-z]+)(\s[a-zA-Z']+){1,6}"`, lalu dipilih unique message nya menggunakan ` | sort | uniq | `, setelah itu dilakukan iterasi menggunakan `while read -r` untuk mengconcatenate error message dengan jumlah kemunculan masing masing error message, setelah itu diurutkan berdasarkan jumlah menggunakan `| sort -rt',' -nk2 >> error_message.csv` dan menambahkan nya ke file error_message.csv.
 
+Screenshot hasil untuk no 1d (Kodingan terpisah) ini adalah seperti berikut:
+![screenshot1D](./soal1/screenshot1D.jpg)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
+
 **e.** Untuk soal ini diperlukan nama setiap user dahulu menggunakan syntax seperti no **1.b** yaitu:
 ```bash
 name=$(grep -rohP "(\([a-zA-Z.]+\))" syslog.log | sort | uniq | grep -oP "(?<=\().*(?=\))");
@@ -128,6 +144,10 @@ do
 done |sort >> user_statistic.csv;
 ```
 syntax `|sort >> user_statistic.csv` digunakan untuk mengurutkan data berdasarkan nama secara ascending dan memasukkannya ke dalam file user_statistic.csv
+
+Screenshot hasil untuk no 1e (Kodingan terpisah) ini adalah seperti berikut:
+![screenshot1E](./soal1/screenshot1E.jpg)
+**Kendala:** tidak ditemukan kendala dalam soal ini.
 
 ### Soal No.2 
 Steven dan Manis mendirikan sebuah startup bernama “TokoShiSop”. Sedangkan kamu dan Clemong adalah karyawan pertama dari TokoShiSop. Setelah tiga tahun bekerja, Clemong diangkat menjadi manajer penjualan TokoShiSop, sedangkan kamu menjadi kepala gudang yang mengatur keluar masuknya barang.
