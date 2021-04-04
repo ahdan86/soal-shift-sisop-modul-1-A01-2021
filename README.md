@@ -403,5 +403,121 @@ Screenshoot hahsil:
 ![image](https://user-images.githubusercontent.com/81211647/113510991-b1bcdc00-9587-11eb-816e-4ef7ee398890.png)
 
 
+**c.** Pada soal 3c akan melakukan download secara bergantian antara kucing dan kelinci lalu dimasukkan ke dalam direktori file bernama "Kucing_(tanggal) atau "Kelinci_(tanggal)", pada skrip kami akan menggunakan perbandingan antara jumlah file direktori "Kelinci_" dan "Kucing_"
 
+```
+jumlah_kucing=`ls -dq Kucing_* | wc -l`
+echo $jumlah_kucing
+jumlah_kelinci=`ls -dq Kelinci_* | wc -l`
+echo $jumlah_kelinci
+```
 
+Dengan membandingkan jumlah file tersebut kita akan tau apakah ada file dengan nama "Kelinci_*" ataupun "Kucing_*" jika belum ada file sama sekali maka akan mendownload file foto dan dimasukkan ke dalam file direktori "Kucing_*". Kami menggunakan if pada hal ini
+```
+if [ $jumlah_kucing -le $jumlah_kelinci ]
+then	
+	newfile="Kucing_$(date +"%m-%d-%Y")"
+	mkdir $newfile
+
+	no=1
+	while [ $no -le 23 ]
+	 do
+		wget -a Foto.log -nv  https://loremflickr.com/320/240/kitten
+		no=$((no+1))
+	 done
+	mv Foto.log $newfile
+	md5sum * | sort | awk 'BEGIN{hash = ""} $1 == hash {print $2} {hash = $1}' | xargs rm
+
+	s=1
+	for file in *
+	do
+		if [[ $file == *"kitten"* ]]
+		then
+			namafile=`printf "Kucing_%02d.jpg" $s`
+			mv $file $namafile
+			s=$((s+1))
+			mv *.jpg $newfile
+
+		fi
+	done
+```
+
+Dan pada jika sudah ada file kucing akan melakukan download terhadap kelinci 
+```
+elif [ $jumlah_kucing -gt $jumlah_kelinci ]
+then
+	newfile="Kelinci_$(date +"%m-%d-%Y")"
+	mkdir $newfile
+
+	no=1
+	while [ $no -le 23 ]
+	 do
+		wget -a Foto.log -nv  https://loremflickr.com/320/240/bunny
+		no=$((no+1))
+	 done
+	mv Foto.log $newfile
+	md5sum * | sort | awk 'BEGIN{hash = ""} $1 == hash {print $2} {hash = $1}' | xargs rm
+
+	s=1
+	for file in *
+	do
+		if [[ $file == *"bunny"* ]]
+		then
+			namafile=`printf "Kelinci_%02d.jpg" $s`
+			mv $file $namafile
+			s=$((s+1))
+			mv *.jpg $newfile
+
+		fi
+	done
+fi
+```
+Logika dalam pengerjaan ini adalah jika pada hari ini mendownload kucing atau kelinci maka besoknya adalah file sebaliknya (karena pada contoh soal menggunakan kucing pada downlaod hari pertama, maka kami melakukan download terhadap kucing terlebih dahulu jika tidak ada satupun file).
+
+Screenshoot Hasil:
+- saat belum ada file sama sekali
+![image](https://user-images.githubusercontent.com/81211647/113511627-ebdbad00-958a-11eb-8462-bbde5b31409b.png)
+
+- setelah dijalankan akan mendownload file kucing terlebih dahulu (pada lingkaran merah akan melakukan pengecekan terhadap jumlah file dari kelinci ataupun kucing)
+![image](https://user-images.githubusercontent.com/81211647/113511681-3a894700-958b-11eb-96c4-1017b8acd630.png)
+
+- Jika dilakukan lagi maka akan menghasilkan File direktori Kelinci
+![image](https://user-images.githubusercontent.com/81211647/113511730-8fc55880-958b-11eb-85e7-2fc6dbba09b4.png)
+
+**d.** Untuk soal 3d kita membuat sebuah skrip untuk melakukan proses zip pada semua foto dan log dari file lalu akan menghilangkan file direktori yang sudah terzip
+
+```
+d=$(date  "+%m%d%Y")
+
+zip -m -P $d -r Koleksi.zip . -i "*.jpg" "*.log"
+rm -d \Kucing*
+rm -d \Kelinci*
+```
+dalam kasus ini soal mmenginginkan file zip telah memiliki password berupa tanggal saat file zip dibuat. Pada kodingan di atas -P berguna untuk memberikan password pada zip dan -m untuk memindahkan file dengan format "*.jpg" "*.log"
+
+Screenshoot Hasil:
+![image](https://user-images.githubusercontent.com/81211647/113511936-85578e80-958c-11eb-8c94-70b16d8854c0.png)
+nb: tanda merah berarti proses zip dapat berjalan
+
+**e.** Pada soal 3e akan dilakukan zip dan unzip fike secara berkala dalam hari kerja. Zip dilakukan pada pukul 7 dan unzip dilakukan pada pukul 6 sore
+
+pada proses zip kami melakukan bash terhadap skrip soal 3d 
+```
+0 7 * * 1-5 bash ~/Soal3/soal3d.sh
+```
+
+Lalu untuk unzip kami membuat skrip baru dengan kodingan:
+```
+pass=$(date "+%m%d%Y") 
+unzip -P &pass Koleksi.zip
+rm Koleksi.zip
+```
+dalam melakukan unzip dilakukakn pembuatan password lagi untuk membuak file zip dan tanggalnya sesuai hari tersebut lalu dalam soal meminta untuk menghapus file zip maka ditambahkan command remove untuk file zip
+
+Untuk cron proses unzip:
+```
+0 18 * * 1-5 cd ~/Soal3 && pass=$(date "+%m%d%Y") && unzip -P &pass Koleksi.zip && rm Koleksi.zip
+```
+
+Screenshoot hasil pada saat unzip (untuk proses zip sama dengan nomor 3d):
+![image](https://user-images.githubusercontent.com/81211647/113512498-17609680-958f-11eb-91c2-b980b1754883.png)
