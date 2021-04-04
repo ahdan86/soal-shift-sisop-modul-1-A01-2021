@@ -305,7 +305,6 @@ Screenshot hasil untuk no 2d (Kodingan terpisah) ini adalah seperti berikut:
 ### Soal No. 3
 **a.** Membuat script untuk mengunduh 23 gambar dari "https://loremflickr.com/320/240/kitten" serta menyimpan log-nya ke file "Foto.log". Karena gambar yang diunduh acak, ada kemungkinan gambar yang sama terunduh lebih dari sekali, oleh karena itu kalian harus menghapus gambar yang sama (tidak perlu mengunduh gambar lagi untuk menggantinya). Kemudian menyimpan gambar-gambar tersebut dengan nama "Koleksi_XX" dengan nomor yang berurutan tanpa ada nomor yang hilang (contoh : Koleksi_01, Koleksi_02, ...)
 
-
 **b.** Karena Kuuhaku malas untuk menjalankan script tersebut secara manual, ia juga meminta kalian untuk menjalankan script tersebut sehari sekali pada jam 8 malam untuk tanggal-tanggal tertentu setiap bulan, yaitu dari tanggal 1 tujuh hari sekali (1,8,...), serta dari tanggal 2 empat hari sekali(2,6,...). Supaya lebih rapi, gambar yang telah diunduh beserta log-nya, dipindahkan ke folder dengan nama tanggal unduhnya dengan format "DD-MM-YYYY" (contoh : "13-03-2023").
 
 **c.** Agar kuuhaku tidak bosan dengan gambar anak kucing, ia juga memintamu untuk mengunduh gambar kelinci dari "https://loremflickr.com/320/240/bunny". Kuuhaku memintamu mengunduh gambar kucing dan kelinci secara bergantian (yang pertama bebas. contoh : tanggal 30 kucing > tanggal 31 kelinci > tanggal 1 kucing > ... ). Untuk membedakan folder yang berisi gambar kucing dan gambar kelinci, nama folder diberi awalan "Kucing_" atau "Kelinci_" (contoh : "Kucing_13-03-2023").
@@ -317,3 +316,40 @@ Screenshot hasil untuk no 2d (Kodingan terpisah) ini adalah seperti berikut:
 **Catatan**:
 - Gunakan bash, AWK, dan command pendukung
 - Tuliskan semua cron yang kalian pakai ke file cron3[b/e].tab yang sesuai
+
+
+### Jawaban No.3
+**a.** Pada soal 3a ini ingin membuat sebuah skrip untuk me-downlaod sebuah foto dari https://loremflickr.com/320/240/kitten dengan ketentuan gambar tidak boleh kembar dan penamaannya diganti menjadi "Koleksi_XX" dengan "XX" sesuai urutan download
+
+untuk mendownload file menggunakan command wget dan juga akan menyimpan log dari pendownload an di "Foto.log"
+```
+no=1
+while [ $no -le 23 ]
+ do
+	wget -a Foto.log -nv  https://loremflickr.com/320/240/kitten
+	no=$((no+1))
+ done
+```
+setelah di download akan dilakukan sorting menggunakan awk dengan mengecek dari md5 tiap file dan dilihat dari baris pertama md5, jika sama akan diremove 
+
+```
+md5sum * | sort | awk 'BEGIN{hash = ""} $1 == hash {print $2} {hash = $1}' | xargs rm
+```
+
+untuk mengubah nama akan melakukan loop dan nama file foto akan diubah sesuai dengan yang diminta soal dengan mencari nama file dengan awalan "Kitten*" lalu digantidengan awalan "Koleksi*"
+
+```
+s=1
+for file in *
+do
+	if [[ $file == *"kitten"* ]]
+	then
+		namafile=`printf "Koleksi_%02d.jpg" $s`
+		mv $file $namafile
+		s=$((s+1))
+	fi
+done
+```
+![image](https://user-images.githubusercontent.com/81211647/113510731-5d652c80-9586-11eb-8f29-991544bba6ff.png)
+
+**a.**
