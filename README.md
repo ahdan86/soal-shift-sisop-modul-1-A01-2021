@@ -350,6 +350,58 @@ do
 	fi
 done
 ```
+
+Screemshoot hasil:
 ![image](https://user-images.githubusercontent.com/81211647/113510731-5d652c80-9586-11eb-8f29-991544bba6ff.png)
 
-**a.**
+**b.** Untuk Skrip pada nomor 3b menggunakan kodingan download yang sama seperti nomor 3a namun ditambahkan untuk membuat file dengan penamaan sesuai tanggal
+```
+newfile=$(date +'"%m-%d-%Y"')
+mkdir $newfile
+```
+
+lalu pada bagian download 
+```
+no=1
+while [ $no -le 23 ]
+ do
+	wget -a Foto.log -nv  https://loremflickr.com/320/240/kitten
+	no=$((no+1))
+ done
+mv Foto.log $newfile
+md5sum * | sort | awk 'BEGIN{hash = ""} $1 == hash {print $2} {hash = $1}' | xargs rm
+
+s=1
+for file in *
+do
+	if [[ $file == *"kitten"* ]]
+	then
+		namafile=`printf "Koleksi_%02d.jpg" $s`
+		mv $file $namafile
+		s=$((s+1))
+		mv *.jpg $newfile
+
+	fi
+done
+```
+Namun ada pendambahan command mv untuk memindah log dan foto pada file direktori yang baru
+
+```
+mv Foto.log $newfile
+mv *.jpg $newfile
+```
+untuk pemindahan foto adalah dengan memindah semua file dengan format ".jpg"
+
+Untuk Cron nya:
+
+```
+0 20 1-31/7,2-31/4 * * /bin/bash /home/valda/Soal3/Soal3b.sh
+```
+dari crontabnya akan melakukkan bash pada skrip nomor 3b dengan waktu sesuai dengan soal
+
+Screenshoot hahsil:
+![image](https://user-images.githubusercontent.com/81211647/113510991-b1bcdc00-9587-11eb-816e-4ef7ee398890.png)
+
+
+
+
